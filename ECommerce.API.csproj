@@ -18,17 +18,11 @@
 
   <ItemGroup>
     <None Remove="Microsoft.EntityFrameworkCore" />
-    <None Remove="Business\" />
-    <None Remove="Business\Interface\" />
-    <None Remove="Business\Implement\" />
     <None Remove="Models\Request\" />
     <None Remove="DataAccess\Interface\" />
     <None Remove="DataAccess\Implement\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Business\" />
-    <Folder Include="Business\Interface\" />
-    <Folder Include="Business\Implement\" />
     <Folder Include="Models\Request\" />
     <Folder Include="DataAccess\Interface\" />
     <Folder Include="DataAccess\Implement\" />

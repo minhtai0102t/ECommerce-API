@@ -40,6 +40,12 @@ namespace ECommerce.API.Controllers
             if (token == "") token = "invalid";
             return Ok(token);
         }
+        [HttpGet("GetUsers")]
+        public IActionResult GetAllUser()
+        {
+            var result = dataAccess.GetAllUser();
+            return Ok(result);
+        }
 
     }
 }

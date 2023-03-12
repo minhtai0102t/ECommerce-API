@@ -1,7 +1,10 @@
 ﻿using System;
 using ECommerce.API.DataAccess;
-using Microsoft.AspNetCore.Cors;
+using ECommerce.API.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Cors;
+using ECommerce.API.Models.Request;
 
 namespace ECommerce.API.Controllers
 {
@@ -9,32 +12,32 @@ namespace ECommerce.API.Controllers
     [ApiController]
     public class CartController : ControllerBase
 	{
-        private readonly IDataAccess _dataAccess;
-        private readonly IConfiguration _configuration;
-		public CartController(IDataAccess dataAccess, IConfiguration configuration)
+        private readonly ICartService dataAccess;
+        private readonly string DateFormat;
+		public CartController(ICartService dataAccess, IConfiguration configuration)
 		{
-            _dataAccess = dataAccess;
-            _configuration = configuration;
+            this.dataAccess = dataAccess;
+            DateFormat = configuration["Constants:DateFormat"];
 		}
 
         [HttpPost("InsertCartItem/{userid}/{productid}")]
         public IActionResult InsertCartItem(int userid, int productid)
         {
-            var result = _dataAccess.InsertCartItem(userid, productid);
+            var result = dataAccess.InsertCartItem(userid, productid);
             return Ok(result ? "inserted" : "not inserted");
         }
 
         [HttpGet("GetActiveCartOfUser/{id}")]
         public IActionResult GetActiveCartOfUser(int id)
         {
-            var result = _dataAccess.GetActiveCartOfUser(id);
+            var result = dataAccess.GetActiveCartOfUser(id);
             return Ok(result);
         }
 
         [HttpGet("GetAllPreviousCartsOfUser/{id}")]
         public IActionResult GetAllPreviousCartsOfUser(int id)
         {
-            var result = _dataAccess.GetAllPreviousCartsOfUser(id);
+            var result = dataAccess.GetAllPreviousCartsOfUser(id);
             return Ok(result);
         }
     }

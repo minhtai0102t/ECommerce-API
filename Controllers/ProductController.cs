@@ -1,7 +1,10 @@
 ﻿using System;
 using ECommerce.API.DataAccess;
-using Microsoft.AspNetCore.Cors;
+using ECommerce.API.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Cors;
+using ECommerce.API.Models.Request;
 
 namespace ECommerce.API.Controllers
 {
@@ -9,12 +12,21 @@ namespace ECommerce.API.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly IDataAccess dataAccess;
-        private readonly IConfiguration configuration;
-        public ProductController(IDataAccess IdataAccess, IConfiguration Iconfiguration)
+        private readonly IProductService dataAccess;
+        private readonly string DateFormat;
+        public ProductController(IProductService dataAccess, IConfiguration configuration)
 		{
-            dataAccess = IdataAccess;
-            configuration = Iconfiguration;
+            this.dataAccess = dataAccess;
+            DateFormat = configuration["Constants:DateFormat"];
+        }
+        [HttpPost("InsertProduct")]
+        public IActionResult InsertProduct(UpdateProductReq req)
+        {
+            var result = dataAccess.InsertProduct(req);
+            string? message;
+            if (result) message = "inserted";
+            else message = "fail";
+            return Ok(message);
         }
 
         [HttpGet("GetProducts")]
@@ -30,11 +42,23 @@ namespace ECommerce.API.Controllers
             var result = dataAccess.GetProduct(id);
             return Ok(result);
         }
-        [HttpPut("UpdateProduct/{id}")]
-        public IActionResult UpdateProduct(int id)
+        [HttpPut("UpdateProduct")]
+        public IActionResult UpdateProduct(UpdateProductReq req)
         {
-            var result = dataAccess.UpdateProduct(id);
-            return Ok(result);
+            var result = dataAccess.UpdateProduct(req);
+            string? message;
+            if (result) message = "updated";
+            else message = "fail";
+            return Ok(message);
+        }
+        [HttpDelete("DelteProduct/id")]
+        public IActionResult DeleteProduct(int id)
+        {
+            var result = dataAccess.DeleteProduct(id);
+            string? message;
+            if (result) message = "deleted";
+            else message = "fail";
+            return Ok(message);
         }
     }
 }

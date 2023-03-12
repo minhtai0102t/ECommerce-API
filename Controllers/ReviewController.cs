@@ -11,9 +11,9 @@ namespace ECommerce.API.Controllers
     [ApiController]
     public class ReviewController : ControllerBase
     {
-        readonly IDataAccess dataAccess;
+        readonly IReviewService dataAccess;
         private readonly string DateFormat;
-        public ReviewController(IDataAccess dataAccess, IConfiguration configuration)
+        public ReviewController(IReviewService dataAccess, IConfiguration configuration)
         {
             this.dataAccess = dataAccess;
             DateFormat = configuration["Constants:DateFormat"];

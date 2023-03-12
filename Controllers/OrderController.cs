@@ -10,9 +10,9 @@ namespace ECommerce.API.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        readonly IDataAccess dataAccess;
+        readonly IOrderService dataAccess;
         private readonly string DateFormat;
-        public OrderController(IDataAccess dataAccess, IConfiguration configuration)
+        public OrderController(IOrderService dataAccess, IConfiguration configuration)
         {
             this.dataAccess = dataAccess;
             DateFormat = configuration["Constants:DateFormat"];

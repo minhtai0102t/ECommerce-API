@@ -10,18 +10,18 @@ namespace ECommerce.API.Controllers
     [ApiController]
     public class PaymentController : ControllerBase
 	{
-        private readonly IDataAccess _dataAccess;
-        private readonly IConfiguration _configuration;
-        public PaymentController(IDataAccess dataAccess, IConfiguration configuration)
+        private readonly IPaymentService dataAccess;
+        private readonly string DateFormat;
+        public PaymentController(IPaymentService dataAccess, IConfiguration configuration)
 		{
-            _dataAccess = dataAccess;
-            _configuration = configuration;
+            this.dataAccess = dataAccess;
+            DateFormat = configuration["Constants:DateFormat"];
         }
 
         [HttpGet("GetPaymentMethods")]
         public IActionResult GetPaymentMethods()
         {
-            var result = _dataAccess.GetPaymentMethods();
+            var result = dataAccess.GetPaymentMethods();
             return Ok(result);
         }
 
@@ -29,7 +29,7 @@ namespace ECommerce.API.Controllers
         public IActionResult InsertPayment(Payment payment)
         {
             payment.CreatedAt = DateTime.Now.ToString();
-            var id = _dataAccess.InsertPayment(payment);
+            var id = dataAccess.InsertPayment(payment);
             return Ok(id.ToString());
         }
     }

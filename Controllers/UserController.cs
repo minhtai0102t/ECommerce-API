@@ -11,9 +11,9 @@ namespace ECommerce.API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        readonly IDataAccess dataAccess;
+        readonly IUserService dataAccess;
         private readonly string DateFormat;
-        public UserController(IDataAccess dataAccess, IConfiguration configuration)
+        public UserController(IUserService dataAccess, IConfiguration configuration)
         {
             this.dataAccess = dataAccess;
             DateFormat = configuration["Constants:DateFormat"];

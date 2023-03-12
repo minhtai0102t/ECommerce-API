@@ -9,9 +9,9 @@ namespace ECommerce.API.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        readonly IDataAccess dataAccess;
+        private readonly ICategoryService dataAccess;
         private readonly string DateFormat;
-        public CategoryController(IDataAccess dataAccess, IConfiguration configuration)
+        public CategoryController(ICategoryService dataAccess, IConfiguration configuration)
         {
             this.dataAccess = dataAccess;
             DateFormat = configuration["Constants:DateFormat"];

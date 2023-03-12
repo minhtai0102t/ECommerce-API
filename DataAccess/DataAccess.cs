@@ -22,6 +22,39 @@ namespace ECommerce.API.DataAccess
             dateformat = this.configuration["Constants:DateFormat"];
         }
 
+        #region
+        //Shopping cart
+        public bool InsertCartItem(int userId, int productId)
+        {
+            using (SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+
+                connection.Open();
+                string query = "SELECT COUNT(*) FROM Carts WHERE UserId=" + userId + " AND Ordered='false';";
+                command.CommandText = query;
+                int count = (int)command.ExecuteScalar();
+                if (count == 0)
+                {
+                    query = "INSERT INTO Carts (UserId, Ordered, OrderedOn) VALUES (" + userId + ", 'false', '');";
+                    command.CommandText = query;
+                    command.ExecuteNonQuery();
+                }
+
+                query = "SELECT CartId FROM Carts WHERE UserId=" + userId + " AND Ordered='false';";
+                command.CommandText = query;
+                int cartId = (int)command.ExecuteScalar();
+
+
+                query = "INSERT INTO CartItems (CartId, ProductId) VALUES (" + cartId + ", " + productId + ");";
+                command.CommandText = query;
+                command.ExecuteNonQuery();
+                return true;
+            }
+        }
         public Cart GetActiveCartOfUser(int userid)
         {
             var cart = new Cart();
@@ -68,29 +101,6 @@ namespace ECommerce.API.DataAccess
             }
             return cart;
         }
-
-        public List<Cart> GetAllPreviousCartsOfUser(int userid)
-        {
-            var carts = new List<Cart>();
-            using (SqlConnection connection = new(dbconnection))
-            {
-                SqlCommand command = new()
-                {
-                    Connection = connection
-                };
-                string query = "SELECT CartId FROM Carts WHERE UserId=" + userid + " AND Ordered='true';";
-                command.CommandText = query;
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    var cartid = (int)reader["CartId"];
-                    carts.Add(GetCart(cartid));
-                }
-            }
-            return carts;
-        }
-
         public Cart GetCart(int cartid)
         {
             var cart = new Cart();
@@ -131,7 +141,31 @@ namespace ECommerce.API.DataAccess
             }
             return cart;
         }
+        public List<Cart> GetAllPreviousCartsOfUser(int userid)
+        {
+            var carts = new List<Cart>();
+            using (SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+                string query = "SELECT CartId FROM Carts WHERE UserId=" + userid + " AND Ordered='true';";
+                command.CommandText = query;
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var cartid = (int)reader["CartId"];
+                    carts.Add(GetCart(cartid));
+                }
+            }
+            return carts;
+        }
+        #endregion
 
+        #region
+        //Offer
         public Offer GetOffer(int id)
         {
             var offer = new Offer();
@@ -156,7 +190,10 @@ namespace ECommerce.API.DataAccess
             }
             return offer;
         }
+        #endregion
 
+        #region
+        //Payment Method
         public List<PaymentMethod> GetPaymentMethods()
         {
             var result = new List<PaymentMethod>();
@@ -188,7 +225,10 @@ namespace ECommerce.API.DataAccess
             }
             return result;
         }
+        #endregion
 
+        #region
+        //Product
         public Product GetProduct(int id)
         {
             var product = new Product();
@@ -245,105 +285,13 @@ namespace ECommerce.API.DataAccess
                         "SET Title=" + req.Title +
                         ",Description=" + req.Description +
                         "Price=" + req.Price +
-                        "Quantity="+ req.Quantity +
-                        "ImageName=" +req.ImageName;
+                        "Quantity=" + req.Quantity +
+                        "ImageName=" + req.ImageName;
                 command.CommandText = query;
                 command.ExecuteNonQuery();
                 return true;
             }
         }
-
-        public List<ProductCategory> GetProductCategories()
-        {
-            var productCategories = new List<ProductCategory>();
-            using (SqlConnection connection = new(dbconnection))
-            {
-                SqlCommand command = new()
-                {
-                    Connection = connection
-                };
-                string query = "SELECT * FROM ProductCategories;";
-                command.CommandText = query;
-
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    var category = new ProductCategory()
-                    {
-                        Id = (int)reader["CategoryId"],
-                        Category = (string)reader["Category"],
-                        SubCategory = (string)reader["SubCategory"]
-                    };
-                    productCategories.Add(category);
-                }
-            }
-            return productCategories;
-        }
-
-        public ProductCategory GetProductCategory(int id)
-        {
-            var productCategory = new ProductCategory();
-
-            using (SqlConnection connection = new(dbconnection))
-            {
-                SqlCommand command = new()
-                {
-                    Connection = connection
-                };
-
-                string query = "SELECT * FROM ProductCategories WHERE CategoryId=" + id + ";";
-                command.CommandText = query;
-
-                connection.Open();
-                SqlDataReader r = command.ExecuteReader();
-                while (r.Read())
-                {
-                    productCategory.Id = (int)r["CategoryId"];
-                    productCategory.Category = (string)r["Category"];
-                    productCategory.SubCategory = (string)r["SubCategory"];
-                }
-            }
-
-            return productCategory;
-        }
-
-        public List<Review> GetProductReviews(int productId)
-        {
-            var reviews = new List<Review>();
-            using (SqlConnection connection = new(dbconnection))
-            {
-                SqlCommand command = new()
-                {
-                    Connection = connection
-                };
-
-                string query = "SELECT * FROM Reviews WHERE ProductId=" + productId + ";";
-                command.CommandText = query;
-
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    var review = new Review()
-                    {
-                        Id = (int)reader["ReviewId"],
-                        Value = (string)reader["Review"],
-                        CreatedAt = (string)reader["CreatedAt"]
-                    };
-
-                    var userid = (int)reader["UserId"];
-                    review.User = GetUser(userid);
-
-                    var productid = (int)reader["ProductId"];
-                    review.Product = GetProduct(productid);
-
-                    reviews.Add(review);
-                }
-            }
-            return reviews;
-        }
-
         public List<Product> GetProducts(string category, string subcategory, int count)
         {
             var products = new List<Product>();
@@ -384,6 +332,112 @@ namespace ECommerce.API.DataAccess
             }
             return products;
         }
+        public bool DeleteProduct(int id)
+        {
+            return true;
+        }
+        #endregion
+
+        #region
+        //Categories
+        public List<ProductCategory> GetProductCategories()
+        {
+            var productCategories = new List<ProductCategory>();
+            using (SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+                string query = "SELECT * FROM ProductCategories;";
+                command.CommandText = query;
+
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var category = new ProductCategory()
+                    {
+                        Id = (int)reader["CategoryId"],
+                        Category = (string)reader["Category"],
+                        SubCategory = (string)reader["SubCategory"]
+                    };
+                    productCategories.Add(category);
+                }
+            }
+            return productCategories;
+        }
+        public ProductCategory GetProductCategory(int id)
+        {
+            var productCategory = new ProductCategory();
+
+            using (SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+
+                string query = "SELECT * FROM ProductCategories WHERE CategoryId=" + id + ";";
+                command.CommandText = query;
+
+                connection.Open();
+                SqlDataReader r = command.ExecuteReader();
+                while (r.Read())
+                {
+                    productCategory.Id = (int)r["CategoryId"];
+                    productCategory.Category = (string)r["Category"];
+                    productCategory.SubCategory = (string)r["SubCategory"];
+                }
+            }
+
+            return productCategory;
+        }
+
+
+        #endregion
+
+
+        #region
+        //Rreview
+        public List<Review> GetProductReviews(int productId)
+        {
+            var reviews = new List<Review>();
+            using (SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+
+                string query = "SELECT * FROM Reviews WHERE ProductId=" + productId + ";";
+                command.CommandText = query;
+
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var review = new Review()
+                    {
+                        Id = (int)reader["ReviewId"],
+                        Value = (string)reader["Review"],
+                        CreatedAt = (string)reader["CreatedAt"]
+                    };
+
+                    var userid = (int)reader["UserId"];
+                    review.User = GetUser(userid);
+
+                    var productid = (int)reader["ProductId"];
+                    review.Product = GetProduct(productid);
+
+                    reviews.Add(review);
+                }
+            }
+            return reviews;
+        }
+        #endregion
+
+       
 
         public User GetUser(int id)
         {
@@ -416,37 +470,7 @@ namespace ECommerce.API.DataAccess
             return user;
         }
 
-        public bool InsertCartItem(int userId, int productId)
-        {
-            using (SqlConnection connection = new(dbconnection))
-            {
-                SqlCommand command = new()
-                {
-                    Connection = connection
-                };
-
-                connection.Open();
-                string query = "SELECT COUNT(*) FROM Carts WHERE UserId=" + userId + " AND Ordered='false';";
-                command.CommandText = query;
-                int count = (int)command.ExecuteScalar();
-                if (count == 0)
-                {
-                    query = "INSERT INTO Carts (UserId, Ordered, OrderedOn) VALUES (" + userId + ", 'false', '');";
-                    command.CommandText = query;
-                    command.ExecuteNonQuery();
-                }
-
-                query = "SELECT CartId FROM Carts WHERE UserId=" + userId + " AND Ordered='false';";
-                command.CommandText = query;
-                int cartId = (int)command.ExecuteScalar();
-
-
-                query = "INSERT INTO CartItems (CartId, ProductId) VALUES (" + cartId + ", " + productId + ");";
-                command.CommandText = query;
-                command.ExecuteNonQuery();
-                return true;
-            }
-        }
+       
 
         public int InsertOrder(Order order)
         {
@@ -648,5 +672,6 @@ namespace ECommerce.API.DataAccess
             }
             return "";
         }
+      
     }
 }

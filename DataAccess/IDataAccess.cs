@@ -1,4 +1,5 @@
 ﻿using ECommerce.API.Models;
+using ECommerce.API.Models.Request;
 
 namespace ECommerce.API.DataAccess
 {
@@ -11,7 +12,7 @@ namespace ECommerce.API.DataAccess
         // Products
         List<Product> GetProducts(string category, string subcategory, int count); 
         Product GetProduct(int id);
-        bool UpdateProduct(int id);
+        bool UpdateProduct(UpdateProductReq id);
         bool DeleteProduct(int id);
 
         //User

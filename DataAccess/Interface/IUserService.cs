@@ -8,6 +8,10 @@ namespace ECommerce.API.DataAccess
         string IsUserPresent(string email, string password);
 		List<User> GetAllUser();
         User GetUser(int id);
-	}
+		bool Update (User id);
+		bool Delete(User id);
+		
+
+    }
 }
 

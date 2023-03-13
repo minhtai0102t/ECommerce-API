@@ -1,5 +1,6 @@
 ﻿using System;
 using ECommerce.API.DataAccess;
+using ECommerce.API.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,6 +29,24 @@ namespace ECommerce.API.Controllers
         public IActionResult GetProductCategory(int id)
         {
             var result = dataAccess.GetProductCategory(id);
+            return Ok(result);
+        }
+        [HttpPost("InsertProductCategory")]
+        public IActionResult InsertCategory(ProductCategory category)
+        {
+            var result = dataAccess.InsertCategory(category);
+            return Ok(result);
+        }
+        [HttpPut("UpdateCategory/id")]
+        public IActionResult UpdateCategory(ProductCategory id)
+        {
+            var result = dataAccess.UpdateCategory(id);
+            return Ok(result);
+        }
+        [HttpDelete("DeleteCategory")]
+        public IActionResult DeleteCategory(ProductCategory id)
+        {
+            var result = dataAccess.DeleteCategory(id);
             return Ok(result);
         }
     }

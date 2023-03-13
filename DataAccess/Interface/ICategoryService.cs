@@ -7,6 +7,10 @@ namespace ECommerce.API.DataAccess
 	{
         List<ProductCategory> GetProductCategories();
         ProductCategory GetProductCategory(int id);
-	}
+		bool InsertCategory (ProductCategory category);
+        bool UpdateCategory(ProductCategory id);
+        bool DeleteCategory(ProductCategory id);
+
+    }
 }
 

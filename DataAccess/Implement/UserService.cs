@@ -260,7 +260,6 @@ namespace ECommerce.API.DataAccess
                 command.Parameters.Add("@pwd", System.Data.SqlDbType.NVarChar).Value = id.Password;
                 command.Parameters.Add("@cat", System.Data.SqlDbType.NVarChar).Value = id.CreatedAt;
                 command.Parameters.Add("@mat", System.Data.SqlDbType.NVarChar).Value = id.ModifiedAt;
-
                 command.ExecuteNonQuery();
             }
             return true;

@@ -157,12 +157,7 @@ namespace ECommerce.API.DataAccess
 
 
                 SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    var user = new User();
-                    user.Id = (int)reader["CategoryId"];
-                    users.Remove(user);
-                }
+            
             }
             return true;
         }

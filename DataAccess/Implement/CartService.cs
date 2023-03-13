@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Cors;
 using ECommerce.API.Models.Request;
 using System.Data.SqlClient;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ECommerce.API.DataAccess
 {
@@ -24,7 +25,7 @@ namespace ECommerce.API.DataAccess
             this.userService = userService;
             this.productService = productService;
         }
-		public bool InsertCartItem(int userId, int productId)
+		public bool InsertCartItem(int userId, int productId, int quantity)
         {
             using (SqlConnection connection = new(dbconnection))
             {
@@ -48,8 +49,7 @@ namespace ECommerce.API.DataAccess
                 command.CommandText = query;
                 int cartId = (int)command.ExecuteScalar();
 
-
-                query = "INSERT INTO CartItems (CartId, ProductId) VALUES (" + cartId + ", " + productId + ");";
+                query = "INSERT INTO CartItems (CartId, ProductId, Quantity) VALUES (" + cartId + ", " + productId + ", " + quantity + ");";
                 command.CommandText = query;
                 command.ExecuteNonQuery();
                 return true;
@@ -80,7 +80,7 @@ namespace ECommerce.API.DataAccess
 
                 int cartid = (int)command.ExecuteScalar();
 
-                query = "select * from CartItems where CartId=" + cartid + ";";
+                query = "SELECT * From CartItems WHERE CartId=" + cartid + ";";
                 command.CommandText = query;
 
                 SqlDataReader reader = command.ExecuteReader();
@@ -89,7 +89,8 @@ namespace ECommerce.API.DataAccess
                     CartItem item = new()
                     {
                         Id = (int)reader["CartItemId"],
-                        Product = productService.GetProduct((int)reader["ProductId"])
+                        Product = productService.GetProduct((int)reader["ProductId"]),
+                        Quantity = (int)reader["quantity"]
                     };
                     cart.CartItems.Add(item);
                 }
@@ -121,7 +122,8 @@ namespace ECommerce.API.DataAccess
                     CartItem item = new()
                     {
                         Id = (int)reader["CartItemId"],
-                        Product = productService.GetProduct((int)reader["ProductId"])
+                        Product = productService.GetProduct((int)reader["ProductId"]),
+                        Quantity = (int)reader["quantity"]
                     };
                     cart.CartItems.Add(item);
                 }
@@ -162,6 +164,31 @@ namespace ECommerce.API.DataAccess
             }
             return carts;
         }
-	}
+        public bool DeleteCartItem(int userId,int productId)
+        {
+            using (SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+                connection.Open();
+
+
+                string query = "SELECT CartId FROM Carts WHERE UserId=" + userId + " AND Ordered='false';";
+                command.CommandText = query;
+                int cartId = (int)command.ExecuteScalar();
+                if(cartId == 0)
+                {
+                    return false;
+                }
+
+                query = "DELETE FROM CartItems WHERE CartId=" + cartId + "AND ProductId=" + productId + ";";
+                return true;
+
+            }
+
+        }
+    }
 }
 

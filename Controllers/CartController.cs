@@ -20,10 +20,10 @@ namespace ECommerce.API.Controllers
             DateFormat = configuration["Constants:DateFormat"];
 		}
 
-        [HttpPost("InsertCartItem/{userid}/{productid}")]
-        public IActionResult InsertCartItem(int userid, int productid)
+        [HttpPost("InsertCartItem/{userid}/{productid}/{quantity}")]
+        public IActionResult InsertCartItem(int userid, int productid, int quantity)
         {
-            var result = dataAccess.InsertCartItem(userid, productid);
+            var result = dataAccess.InsertCartItem(userid, productid, quantity);
             return Ok(result ? "inserted" : "not inserted");
         }
 

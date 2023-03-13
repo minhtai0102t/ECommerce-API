@@ -20,7 +20,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost("RegisterUser")]
-        public async Task<IActionResult> RegisterUser(User user)
+        public IActionResult RegisterUser(User user)
         {
             user.CreatedAt = DateTime.Now.ToString(DateFormat);
             user.ModifiedAt = DateTime.Now.ToString(DateFormat);
@@ -34,13 +34,31 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost("LoginUser")]
-        public IActionResult LoginUser([FromBody] User user)
+        public IActionResult LoginUser(User user)
         {
             var token = dataAccess.IsUserPresent(user.Email, user.Password);
             if (token == "") token = "invalid";
             return Ok(token);
         }
+        [HttpGet("GetUsers")]
+        public IActionResult GetAllUser()
+        {
+            var result = dataAccess.GetAllUser();
+            return Ok(result);
+        }
+        [HttpDelete("Delete")]
+        public IActionResult Delete(int id)
+        {
+            var result = dataAccess.Delete(id);
+            return Ok(result?"deleted" : "delete fail");
+        }
 
+        [HttpPut("Update")]
+        public IActionResult Update(User id)
+        {
+            var result = dataAccess.Update(id);
+            return Ok(result ? "updated" : "update fail");
+        }
     }
 }
 

@@ -5,7 +5,7 @@ namespace ECommerce.API.DataAccess
 {
 	public interface ICartService
 	{
-        bool InsertCartItem(int userId, int productId);
+        bool InsertCartItem(int userId, int productId, int quantity);
         Cart GetActiveCartOfUser(int userid);
         Cart GetCart(int cartid);
         List<Cart> GetAllPreviousCartsOfUser(int userid);

@@ -14,7 +14,7 @@ builder.Services.AddCors(options =>
                       {
                           policy.WithOrigins("http://timmo.website",
                                               "https://timmo.website",
-                                              "http://localhost:4200").AllowAnyMethod();
+                                              "http://localhost:4200").AllowAnyMethod().AllowCredentials().AllowAnyHeader();
                       });
 });
 
@@ -63,3 +63,8 @@ app.UseHttpsRedirection();
 app.MapControllers();
 
 app.Run();
+
+app.UseAuthorization();
+
+app.UseAuthentication();
+

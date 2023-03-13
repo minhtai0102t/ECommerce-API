@@ -50,6 +50,7 @@ namespace ECommerce.API.DataAccess
                     user.Password = (string)reader["Password"];
                     user.CreatedAt = (string)reader["CreatedAt"];
                     user.ModifiedAt = (string)reader["ModifiedAt"];
+                    user.Role = (string)reader["role"];
                 }
             }
             return user;
@@ -74,7 +75,7 @@ namespace ECommerce.API.DataAccess
                     return false;
                 }
 
-                query = "INSERT INTO Users (FirstName, LastName, Address, Mobile, Email, Password, CreatedAt, ModifiedAt) values (@fn, @ln, @add, @mb, @em, @pwd, @cat, @mat);";
+                query = "INSERT INTO Users (FirstName, LastName, Address, Mobile, Email, Password, CreatedAt, ModifiedAt, role) values (@fn, @ln, @add, @mb, @em, @pwd, @cat, @mat, @role);";
 
                 command.CommandText = query;
                 command.Parameters.Add("@fn", System.Data.SqlDbType.NVarChar).Value = user.FirstName;
@@ -85,6 +86,7 @@ namespace ECommerce.API.DataAccess
                 command.Parameters.Add("@pwd", System.Data.SqlDbType.NVarChar).Value = user.Password;
                 command.Parameters.Add("@cat", System.Data.SqlDbType.NVarChar).Value = user.CreatedAt;
                 command.Parameters.Add("@mat", System.Data.SqlDbType.NVarChar).Value = user.ModifiedAt;
+                command.Parameters.Add("@role", System.Data.SqlDbType.NVarChar).Value = user.Role;
 
                 command.ExecuteNonQuery();
             }
@@ -126,6 +128,7 @@ namespace ECommerce.API.DataAccess
                     user.Password = (string)reader["Password"];
                     user.CreatedAt = (string)reader["CreatedAt"];
                     user.ModifiedAt = (string)reader["ModifiedAt"];
+                    user.Role = (string)reader["role"];
                 }
 
                 string key = "MNU66iBl3T5rh6H52i69";
@@ -142,7 +145,8 @@ namespace ECommerce.API.DataAccess
                     new Claim("mobile", user.Mobile),
                     new Claim("email", user.Email),
                     new Claim("createdAt", user.CreatedAt),
-                    new Claim("modifiedAt", user.ModifiedAt)
+                    new Claim("modifiedAt", user.ModifiedAt),
+                    new Claim("role", user.Role)
                 };
 
                 var jwtToken = new JwtSecurityToken(
@@ -156,7 +160,118 @@ namespace ECommerce.API.DataAccess
             }
             return "";
         }
-      
-	}
+        public List<User> GetAllUser()
+        {
+            var users = new List<User>();
+        //ket noi database
+            using (SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+
+                string query = "SELECT * FROM Users" ;
+                command.CommandText = query;
+
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var user = new User();
+                    user.Id = (int)reader["UserId"];
+                    user.FirstName = (string)reader["FirstName"];
+                    user.LastName = (string)reader["LastName"];
+                    user.Email = (string)reader["Email"];
+                    user.Address = (string)reader["Address"];
+                    user.Mobile = (string)reader["Mobile"];
+                    user.Password = (string)reader["Password"];
+                    user.CreatedAt = (string)reader["CreatedAt"];
+                    user.ModifiedAt = (string)reader["ModifiedAt"];
+                    user.Role = (string)reader["role"];
+                    users.Add(user);
+                }
+            }
+            return users;
+        }
+        public bool Delete(int id)
+        {
+            var users = new List<User>();
+            using (SqlConnection connection = new(dbconnection)) // ket noi database
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+                connection.Open();
+                string query = "SELECT COUNT(*) FROM Users WHERE UserId ='" + id + "' ;";
+                command.CommandText = query;
+                int count = (int)command.ExecuteScalar();
+                if (count == 0)
+                {
+                    connection.Close();
+                    return false;
+                }
+                query = "SELECT COUNT(*) FROM Reviews WHERE UserId ='" + id + "';";
+                command.CommandText = query;
+                count = (int)command.ExecuteScalar();
+                if (count != 0)
+                {
+                    connection.Close();
+                    return false;
+                }
+                query = "DELETE FROM Users WHERE UserId='" + id + "';";
+                command.CommandText = query;
+
+                command.ExecuteNonQuery();
+            }
+            return true;
+
+        }
+        public bool Update(User user)
+        {
+            using (SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+                connection.Open();
+
+
+                
+                string query = "SELECT COUNT(*) FROM Users WHERE UserId ='" + user.Id + "' ;";
+                command.CommandText = query;
+                int count = (int)command.ExecuteScalar();
+                if (count == 0)
+                {
+                    connection.Close();
+                    return false;
+                }
+
+
+
+
+                 query = "UPDATE Users " +
+                               "SET  FirstName=@fn, LastName=@ln, " +"Address=@add, Mobile=@mb, Email=@em, " +"Password=@pwd, CreatedAt=@cat, ModifiedAt=@mat, role=@role" +
+                               "WHERE UserId=" + user.Id + ";";
+                 
+                command.CommandText = query;
+                command.Parameters.Add("@fn", System.Data.SqlDbType.NVarChar).Value = user.FirstName;
+                command.Parameters.Add("@ln", System.Data.SqlDbType.NVarChar).Value = user.LastName;
+                command.Parameters.Add("@add", System.Data.SqlDbType.NVarChar).Value = user.Address;
+                command.Parameters.Add("@mb", System.Data.SqlDbType.NVarChar).Value = user.Mobile;
+                command.Parameters.Add("@em", System.Data.SqlDbType.NVarChar).Value = user.Email;
+                command.Parameters.Add("@pwd", System.Data.SqlDbType.NVarChar).Value = user.Password;
+                command.Parameters.Add("@cat", System.Data.SqlDbType.NVarChar).Value = user.CreatedAt;
+                command.Parameters.Add("@mat", System.Data.SqlDbType.NVarChar).Value = user.ModifiedAt;
+                command.Parameters.Add("@role", System.Data.SqlDbType.NVarChar).Value = user.Role;
+
+                command.ExecuteNonQuery();
+            }
+            return true;
+        }
+
+    }
 }
 

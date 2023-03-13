@@ -40,7 +40,26 @@ namespace ECommerce.API.Controllers
             if (token == "") token = "invalid";
             return Ok(token);
         }
+        [HttpGet("GetUsers")]
+        public IActionResult GetAllUser()
+        {
+            var result = dataAccess.GetAllUser();
+            return Ok(result);
+        }
+        [HttpDelete("Delete")]
+        public IActionResult Delete(User id)
+        {
+            var delete = dataAccess.Delete(id);
+            return Ok(delete);
+        }
 
+      
+        [HttpPut("Update")]
+        public IActionResult Update(User id)
+        {
+            var update = dataAccess.Update(id);
+            return Ok(update);
+        }
     }
 }
 

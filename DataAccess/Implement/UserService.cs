@@ -156,7 +156,116 @@ namespace ECommerce.API.DataAccess
             }
             return "";
         }
-      
-	}
+        public List<User> GetAllUser()
+        {
+            var users = new List<User>();
+        //ket noi database
+            using (SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+
+                string query = "SELECT * FROM Users" ;
+                command.CommandText = query;
+
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var user = new User();
+                    user.Id = (int)reader["UserId"];
+                    user.FirstName = (string)reader["FirstName"];
+                    user.LastName = (string)reader["LastName"];
+                    user.Email = (string)reader["Email"];
+                    user.Address = (string)reader["Address"];
+                    user.Mobile = (string)reader["Mobile"];
+                    user.Password = (string)reader["Password"];
+                    user.CreatedAt = (string)reader["CreatedAt"];
+                    user.ModifiedAt = (string)reader["ModifiedAt"];
+                    users.Add(user);
+                }
+            }
+            return users;
+        }
+        public bool Delete(User id)
+        {
+            var users = new List<User>();
+            using (SqlConnection connection = new(dbconnection)) // ket noi database
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+                connection.Open();
+                string query = "SELECT COUNT(*) FROM Users WHERE UserId ='" + id.Id + "' ;";
+                command.CommandText = query;
+                int count = (int)command.ExecuteScalar();
+                if (count == 0)
+                {
+                    connection.Close();
+                    return false;
+                }
+
+                 query = "DELETE FROM Users WHERE UserId='" + id.Id + "';";
+                command.CommandText = query;
+
+               
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var user = new User();
+                    user.Id = (int)reader["UserId"];
+                    users.Remove(user);
+                }
+            }
+            return true;
+
+        }
+        public bool Update(User id)
+        {
+            using (SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+                connection.Open();
+
+
+                
+                string query = "SELECT COUNT(*) FROM Users WHERE UserId ='" + id.Id + "' ;";
+                command.CommandText = query;
+                int count = (int)command.ExecuteScalar();
+                if (count == 0)
+                {
+                    connection.Close();
+                    return false;
+                }
+
+
+
+
+                 query = "UPDATE Users " +
+                               "SET  FirstName=@fn, LastName=@ln, " +"Address=@add, Mobile=@mb, Email=@em, " +"Password=@pwd, CreatedAt=@cat, ModifiedAt=@mat " +
+                               "WHERE UserId=" + id.Id + ";";
+                 
+                command.CommandText = query;
+                command.Parameters.Add("@fn", System.Data.SqlDbType.NVarChar).Value = id.FirstName;
+                command.Parameters.Add("@ln", System.Data.SqlDbType.NVarChar).Value = id.LastName;
+                command.Parameters.Add("@add", System.Data.SqlDbType.NVarChar).Value = id.Address;
+                command.Parameters.Add("@mb", System.Data.SqlDbType.NVarChar).Value = id.Mobile;
+                command.Parameters.Add("@em", System.Data.SqlDbType.NVarChar).Value = id.Email;
+                command.Parameters.Add("@pwd", System.Data.SqlDbType.NVarChar).Value = id.Password;
+                command.Parameters.Add("@cat", System.Data.SqlDbType.NVarChar).Value = id.CreatedAt;
+                command.Parameters.Add("@mat", System.Data.SqlDbType.NVarChar).Value = id.ModifiedAt;
+
+                command.ExecuteNonQuery();
+            }
+            return true;
+        }
+
+    }
 }
 

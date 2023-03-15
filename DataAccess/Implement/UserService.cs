@@ -238,8 +238,6 @@ namespace ECommerce.API.DataAccess
                 };
                 connection.Open();
 
-
-                
                 string query = "SELECT COUNT(*) FROM Users WHERE UserId ='" + user.Id + "' ;";
                 command.CommandText = query;
                 int count = (int)command.ExecuteScalar();
@@ -249,12 +247,9 @@ namespace ECommerce.API.DataAccess
                     return false;
                 }
 
-
-
-
-                 query = "UPDATE Users " +
+                query = "UPDATE Users " +
                                "SET  FirstName=@fn, LastName=@ln, " +"Address=@add, Mobile=@mb, Email=@em, " +"Password=@pwd, CreatedAt=@cat, ModifiedAt=@mat, role=@role" +
-                               "WHERE UserId=" + user.Id + ";";
+                               " WHERE UserId=" + user.Id + ";";
                  
                 command.CommandText = query;
                 command.Parameters.Add("@fn", System.Data.SqlDbType.NVarChar).Value = user.FirstName;

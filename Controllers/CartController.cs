@@ -24,7 +24,7 @@ namespace ECommerce.API.Controllers
         public IActionResult InsertCartItem(int userid, int productid, int quantity)
         {
             var result = dataAccess.InsertCartItem(userid, productid, quantity);
-            return Ok(result ? "inserted" : "not inserted");
+            return Ok(result ? "inserted" : "insert fail");
         }
 
         [HttpGet("GetActiveCartOfUser/{id}")]
@@ -39,6 +39,12 @@ namespace ECommerce.API.Controllers
         {
             var result = dataAccess.GetAllPreviousCartsOfUser(id);
             return Ok(result);
+        }
+        [HttpDelete("DeleteCartItem/{userid}/{productid}/{quantity}")]
+        public IActionResult DeleteCartItem(int userid, int productid, int quantity)
+        {
+            var result = dataAccess.DeleteCartItem(userid, productid, quantity);
+            return Ok(result ? "deleted" : "delete fail");
         }
     }
 }

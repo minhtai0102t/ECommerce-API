@@ -26,11 +26,7 @@ namespace ECommerce.API.Controllers
             user.ModifiedAt = DateTime.Now.ToString(DateFormat);
 
             var result = dataAccess.InsertUser(user);
-
-            string? message;
-            if (result) message = "inserted";
-            else message = "email not available";
-            return Ok(message);
+            return Ok(result? "inserted" : "insert fail");
         }
 
         [HttpPost("LoginUser")]
@@ -39,6 +35,12 @@ namespace ECommerce.API.Controllers
             var token = dataAccess.IsUserPresent(user.Email, user.Password);
             if (token == "") token = "invalid";
             return Ok(token);
+        }
+        [HttpGet("GetUser/{id}")]
+        public IActionResult GetUser(int id)
+        {
+            var result = dataAccess.GetUser(id);
+            return Ok(result);
         }
         [HttpGet("GetUsers")]
         public IActionResult GetAllUser()

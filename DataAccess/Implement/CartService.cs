@@ -49,12 +49,95 @@ namespace ECommerce.API.DataAccess
                 command.CommandText = query;
                 int cartId = (int)command.ExecuteScalar();
 
-                query = "INSERT INTO CartItems (CartId, ProductId, Quantity) VALUES (" + cartId + ", " + productId + ", " + quantity + ");";
+                query = "SELECT COUNT(*) FROM CartItems WHERE CartId=" + cartId + "AND ProductId=" + productId + ";";
                 command.CommandText = query;
-                command.ExecuteNonQuery();
+                int isCartIdExisted = (int)command.ExecuteScalar();
+                if (isCartIdExisted == 0)
+                {
+                    query = "INSERT INTO CartItems (CartId, ProductId, Quantity) VALUES (" + cartId + ", " + productId + ", " + quantity + ");";
+                    command.CommandText = query;
+                    command.ExecuteNonQuery();
+                }
+                else
+                {
+                    query = "SELECT TOP 1 Quantity FROM CartItems WHERE CartId=" + cartId + "AND ProductId=" + productId + ";";
+                    command.CommandText = query;
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    int dbQuantity = -1;
+                    while (reader.Read())
+                    {
+                        dbQuantity = (int)reader["Quantity"];
+                    }
+                    reader.Close();
+
+                    if(dbQuantity == -1)
+                    {
+                        return false;
+                    }
+                    
+                    query = "UPDATE CartItems SET Quantity=" + (dbQuantity + quantity) + " WHERE CartId=" + cartId + "AND ProductId=" + productId + ";";
+                    command.CommandText = query;
+                    command.ExecuteNonQuery();
+                    
+                }
                 return true;
             }
         }
+
+        public bool DeleteCartItem(int userId, int productId, int quantity)
+        {
+            using (SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+
+                connection.Open();
+                string query = "SELECT COUNT(*) FROM Carts WHERE UserId=" + userId + " AND Ordered='false';";
+                command.CommandText = query;
+                int count = (int)command.ExecuteScalar();
+                if (count == 0)
+                {
+                    return false;
+                }
+
+                query = "SELECT CartId FROM Carts WHERE UserId=" + userId + " AND Ordered='false';";
+                command.CommandText = query;
+                int cartId = (int)command.ExecuteScalar();
+          
+                query = "SELECT COUNT(*) FROM CartItems WHERE CartId=" + cartId + "AND ProductId=" + productId + ";";
+                command.CommandText = query;
+                int isCartIdExisted = (int)command.ExecuteScalar();
+                if (isCartIdExisted == 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    query = "SELECT TOP 1 Quantity FROM CartItems WHERE CartId=" + cartId + "AND ProductId=" + productId + ";";
+                    command.CommandText = query;
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    int dbQuantity = -1;
+                    while (reader.Read())
+                    {
+                        dbQuantity = (int)reader["Quantity"];
+                    }
+                    reader.Close();
+                    if(dbQuantity == -1 || quantity > dbQuantity)
+                    {
+                        return false;
+                    }
+                    query = "UPDATE CartItems SET Quantity=" + (dbQuantity - quantity) + " WHERE CartId=" + cartId + "AND ProductId=" + productId + ";";
+                    command.CommandText = query;
+                    command.ExecuteNonQuery();
+                }
+                return true;
+            }
+        }
+
         public Cart GetActiveCartOfUser(int userid)
         {
             var cart = new Cart();

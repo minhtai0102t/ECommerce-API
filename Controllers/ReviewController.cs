@@ -18,7 +18,12 @@ namespace ECommerce.API.Controllers
             this.dataAccess = dataAccess;
             DateFormat = configuration["Constants:DateFormat"];
         }
-
+        [HttpGet("GetProductReviews/{productId}")]
+        public IActionResult GetProductReviews(int productId)
+        {
+            var result = dataAccess.GetProductReviews(productId);
+            return Ok(result);
+        }
         [HttpPost("InsertReview")]
         public IActionResult InsertReview([FromBody] Review review)
         {
@@ -26,15 +31,6 @@ namespace ECommerce.API.Controllers
             dataAccess.InsertReview(review);
             return Ok("inserted");
         }
-
-        [HttpGet("GetProductReviews/{productId}")]
-        public IActionResult GetProductReviews(int productId)
-        {
-            var result = dataAccess.GetProductReviews(productId);
-            return Ok(result);
-        }
-
-
     }
 }
 

@@ -17,14 +17,6 @@ namespace ECommerce.API.Controllers
             this.dataAccess = dataAccess;
             DateFormat = configuration["Constants:DateFormat"];
         }
-
-        [HttpGet("GetPaymentMethods")]
-        public IActionResult GetPaymentMethods()
-        {
-            var result = dataAccess.GetPaymentMethods();
-            return Ok(result);
-        }
-
         [HttpPost("InsertPayment")]
         public IActionResult InsertPayment(Payment payment)
         {

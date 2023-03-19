@@ -129,6 +129,7 @@ namespace ECommerce.API.DataAccess
                     user.CreatedAt = (string)reader["CreatedAt"];
                     user.ModifiedAt = (string)reader["ModifiedAt"];
                     user.Role = (string)reader["role"];
+                    user.UserAvt = (string)reader["UserAvt"];
                 }
 
                 string key = "MNU66iBl3T5rh6H52i69";
@@ -146,7 +147,8 @@ namespace ECommerce.API.DataAccess
                     new Claim("email", user.Email),
                     new Claim("createdAt", user.CreatedAt),
                     new Claim("modifiedAt", user.ModifiedAt),
-                    new Claim("role", user.Role)
+                    new Claim("role", user.Role),
+                    new Claim("UserAvt", user.UserAvt)
                 };
 
                 var jwtToken = new JwtSecurityToken(

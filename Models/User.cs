@@ -12,6 +12,7 @@
         public string CreatedAt { get; set; } = string.Empty;
         public string ModifiedAt { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
+        public string UserAvt { get; set; } = string.Empty;
     }
        
 }

@@ -8,9 +8,9 @@ using ECommerce.API.Models.Request;
 using System.Data.SqlClient;
 namespace ECommerce.API.DataAccess
 {
-	public class PaymentService : IPaymentService
-	{
- 		private readonly IConfiguration configuration;
+    public class PaymentService : IPaymentService
+    {
+        private readonly IConfiguration configuration;
         private readonly string dbconnection;
         private readonly string dateformat;
         public PaymentService(IConfiguration configuration)
@@ -20,7 +20,7 @@ namespace ECommerce.API.DataAccess
             dateformat = this.configuration["Constants:DateFormat"];
         }
 
-		public int InsertPayment(Payment payment)
+        public int InsertPayment(Payment payment)
         {
             int value = 0;
             using (SqlConnection connection = new(dbconnection))
@@ -55,41 +55,10 @@ namespace ECommerce.API.DataAccess
                 {
                     value = 0;
                 }
+                connection.Close();
             }
             return value;
         }
-
-		 public List<PaymentMethod> GetPaymentMethods()
-        {
-            var result = new List<PaymentMethod>();
-            using (SqlConnection connection = new(dbconnection))
-            {
-                SqlCommand command = new()
-                {
-                    Connection = connection
-                };
-
-                string query = "SELECT * FROM PaymentMethods;";
-                command.CommandText = query;
-
-                connection.Open();
-
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    PaymentMethod paymentMethod = new()
-                    {
-                        Id = (int)reader["PaymentMethodId"],
-                        Type = (string)reader["Type"],
-                        Provider = (string)reader["Provider"],
-                        Available = bool.Parse((string)reader["Available"]),
-                        Reason = (string)reader["Reason"]
-                    };
-                    result.Add(paymentMethod);
-                }
-            }
-            return result;
-        }
-	}
+    }
 }
 

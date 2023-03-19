@@ -40,6 +40,7 @@ namespace ECommerce.API.DataAccess
 
             connection.Open();
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
 
@@ -75,6 +76,7 @@ namespace ECommerce.API.DataAccess
 
                     reviews.Add(review);
                 }
+                connection.Close();
             }
             return reviews;
         }

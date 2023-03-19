@@ -10,7 +10,10 @@ namespace ECommerce.API.DataAccess
 {
 	public class OrderService : IOrderService
 	{
-		private readonly IConfiguration configuration;
+        #region Declare
+
+        #endregion
+        private readonly IConfiguration configuration;
         private readonly string dbconnection;
         private readonly string dateformat;
         public OrderService(IConfiguration configuration)
@@ -55,6 +58,7 @@ namespace ECommerce.API.DataAccess
                 {
                     value = 0;
                 }
+                connection.Close();
             }
 
             return value;

@@ -19,6 +19,24 @@ namespace ECommerce.API.Controllers
             this.dataAccess = dataAccess;
             DateFormat = configuration["Constants:DateFormat"];
         }
+        [HttpGet("GetProducts")]
+        public IActionResult GetProducts(string category, string subcategory, int count)
+        {
+            var result = dataAccess.GetProducts(category, subcategory, count);
+            return Ok(result);
+        }
+        [HttpGet("GetProductsByQuantity/{count}")]
+        public IActionResult GetProductsByQuantity(int count)
+        {
+            var result = dataAccess.GetProductsByQuantity(count);
+            return Ok(result);
+        }
+        [HttpGet("GetProduct/{id}")]
+        public IActionResult GetProduct(int id)
+        {
+            var result = dataAccess.GetProduct(id);
+            return Ok(result);
+        }
         [HttpPost("InsertProduct")]
         public IActionResult InsertProduct(UpdateProductReq req)
         {
@@ -27,20 +45,6 @@ namespace ECommerce.API.Controllers
             if (result) message = "inserted";
             else message = "fail";
             return Ok(message);
-        }
-
-        [HttpGet("GetProducts")]
-        public IActionResult GetProducts(string category, string subcategory, int count)
-        {
-            var result = dataAccess.GetProducts(category, subcategory, count);
-            return Ok(result);
-        }
-
-        [HttpGet("GetProduct/{id}")]
-        public IActionResult GetProduct(int id)
-        {
-            var result = dataAccess.GetProduct(id);
-            return Ok(result);
         }
         [HttpPut("UpdateProduct")]
         public IActionResult UpdateProduct(UpdateProductReq req)
@@ -51,7 +55,7 @@ namespace ECommerce.API.Controllers
             else message = "fail";
             return Ok(message);
         }
-        [HttpDelete("DelteProduct/id")]
+        [HttpDelete("DelteProduct/{id}")]
         public IActionResult DeleteProduct(int id)
         {
             var result = dataAccess.DeleteProduct(id);

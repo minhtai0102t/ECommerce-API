@@ -10,6 +10,7 @@ namespace ECommerce.API.DataAccess
         Cart GetActiveCartOfUser(int userid);
         Cart GetCart(int cartid);
         List<Cart> GetAllPreviousCartsOfUser(int userid);
-	}
+        int TotalOfCarts();
+    }
 }
 

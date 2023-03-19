@@ -10,6 +10,7 @@ namespace ECommerce.API.DataAccess
         User GetUser(int id);
 		bool Update (User id);
 		bool Delete(int id);
+		int TotalOfUsers();
     }
 }
 

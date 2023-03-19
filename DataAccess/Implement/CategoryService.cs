@@ -151,7 +151,7 @@ namespace ECommerce.API.DataAccess
         #region Delete
         public bool DeleteCategory(int id)
         {
-            using (SqlConnection connection = new(dbconnection)) // ket noi database
+            using (SqlConnection connection = new(dbconnection))
             {
                 SqlCommand command = new()
                 {
@@ -162,6 +162,14 @@ namespace ECommerce.API.DataAccess
                 command.CommandText = query;
                 int count = (int)command.ExecuteScalar();
                 if (count == 0)
+                {
+                    connection.Close();
+                    return false;
+                }
+                query = "SELECT COUNT(*) FROM Products WHERE CategoryId ='" + id + "' ;";
+                command.CommandText = query;
+                count = (int)command.ExecuteScalar();
+                if (count > 0)
                 {
                     connection.Close();
                     return false;
@@ -180,7 +188,23 @@ namespace ECommerce.API.DataAccess
             return true;
         }
         #endregion
-
+        #region Total
+        public int TotalOfCategories()
+        {
+            using (SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+                connection.Open();
+                string query = "SELECT COUNT(*) FROM ProductCategories";
+                command.CommandText = query;
+                int total = (int)command.ExecuteScalar();
+                return total;
+            }
+        }
+        #endregion
         #region Destructor
         public void Dispose()
         {

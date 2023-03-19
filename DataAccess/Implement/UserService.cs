@@ -268,7 +268,21 @@ namespace ECommerce.API.DataAccess
             }
             return true;
         }
-
+        public int TotalOfUsers()
+        {
+            using(SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+                connection.Open();
+                string query = "SELECT COUNT(*) FROM Users";
+                command.CommandText = query;
+                int total = (int)command.ExecuteScalar();
+                return total;
+            }
+        }
     }
 }
 

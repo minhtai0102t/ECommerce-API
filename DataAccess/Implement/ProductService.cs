@@ -291,7 +291,23 @@ namespace ECommerce.API.DataAccess
             return true;
         }
         #endregion
-        
+        #region Total
+        public int TotalOfProducts()
+        {
+            using (SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+                connection.Open();
+                string query = "SELECT COUNT(*) FROM Products";
+                command.CommandText = query;
+                int total = (int)command.ExecuteScalar();
+                return total;
+            }
+        }
+        #endregion
     }
 }
 

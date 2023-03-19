@@ -14,6 +14,7 @@ namespace ECommerce.API.DataAccess
         bool DeleteProduct(int id);
 		//Offder
         Offer GetOffer(int id);
-	}
+        int TotalOfProducts();
+    }
 }
 

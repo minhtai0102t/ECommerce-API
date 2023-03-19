@@ -49,6 +49,12 @@ namespace ECommerce.API.Controllers
             var result = dataAccess.DeleteCategory(id);
             return Ok(result ? "deleted" : "delete fail");
         }
+        [HttpGet("TotalOfCategories")]
+        public IActionResult TotalOfCategories()
+        {
+            var result = dataAccess.TotalOfCategories();
+            return Ok(result);
+        }
     }
 }
 

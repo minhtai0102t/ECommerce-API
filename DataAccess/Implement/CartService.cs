@@ -263,6 +263,23 @@ namespace ECommerce.API.DataAccess
             }
         }
         #endregion
+        #region Total
+        public int TotalOfCarts()
+        {
+            using (SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+                connection.Open();
+                string query = "SELECT COUNT(*) FROM Carts";
+                command.CommandText = query;
+                int total = (int)command.ExecuteScalar();
+                return total;
+            }
+        }
+        #endregion
     }
 }
 

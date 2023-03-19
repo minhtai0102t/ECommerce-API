@@ -10,6 +10,7 @@ namespace ECommerce.API.DataAccess
         bool InsertCategory(ProductCategory category);
         bool UpdateCategory(ProductCategory category);
         bool DeleteCategory(int id);
+        int TotalOfCategories();
     }
 }
 

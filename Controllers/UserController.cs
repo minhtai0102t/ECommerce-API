@@ -18,24 +18,6 @@ namespace ECommerce.API.Controllers
             this.dataAccess = dataAccess;
             DateFormat = configuration["Constants:DateFormat"];
         }
-
-        [HttpPost("RegisterUser")]
-        public IActionResult RegisterUser(User user)
-        {
-            user.CreatedAt = DateTime.Now.ToString(DateFormat);
-            user.ModifiedAt = DateTime.Now.ToString(DateFormat);
-
-            var result = dataAccess.InsertUser(user);
-            return Ok(result? "inserted" : "insert fail");
-        }
-
-        [HttpPost("LoginUser")]
-        public IActionResult LoginUser(User user)
-        {
-            var token = dataAccess.IsUserPresent(user.Email, user.Password);
-            if (token == "") token = "invalid";
-            return Ok(token);
-        }
         [HttpGet("GetUser/{id}")]
         public IActionResult GetUser(int id)
         {
@@ -48,18 +30,39 @@ namespace ECommerce.API.Controllers
             var result = dataAccess.GetAllUser();
             return Ok(result);
         }
+        [HttpPost("RegisterUser")]
+        public IActionResult RegisterUser(User user)
+        {
+            user.CreatedAt = DateTime.Now.ToString(DateFormat);
+            user.ModifiedAt = DateTime.Now.ToString(DateFormat);
+
+            var result = dataAccess.InsertUser(user);
+            return Ok(result? "inserted" : "insert fail");
+        }
+        [HttpPost("LoginUser")]
+        public IActionResult LoginUser(User user)
+        {
+            var token = dataAccess.IsUserPresent(user.Email, user.Password);
+            if (token == "") token = "invalid";
+            return Ok(token);
+        }
+        [HttpPut("Update")]
+        public IActionResult Update(User id)
+        {
+            var result = dataAccess.Update(id);
+            return Ok(result ? "updated" : "update fail");
+        }
         [HttpDelete("Delete")]
         public IActionResult Delete(int id)
         {
             var result = dataAccess.Delete(id);
             return Ok(result?"deleted" : "delete fail");
         }
-
-        [HttpPut("Update")]
-        public IActionResult Update(User id)
+        [HttpGet("TotalOfUsers")]
+        public IActionResult TotalOfUsers()
         {
-            var result = dataAccess.Update(id);
-            return Ok(result ? "updated" : "update fail");
+            var result = dataAccess.TotalOfUsers();
+            return Ok(result);
         }
     }
 }

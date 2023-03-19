@@ -64,6 +64,12 @@ namespace ECommerce.API.Controllers
             else message = "fail";
             return Ok(message);
         }
+        [HttpGet("TotalOfProducts")]
+        public IActionResult TotalOfProducts()
+        {
+            var result = dataAccess.TotalOfProducts();
+            return Ok(result);
+        }
     }
 }
 

@@ -45,6 +45,12 @@ namespace ECommerce.API.Controllers
             var result = dataAccess.DeleteCartItem(userid, productid, quantity);
             return Ok(result ? "deleted" : "delete fail");
         }
+        [HttpGet("TotalOfCarts")]
+        public IActionResult TotalOfCarts()
+        {
+            var result = dataAccess.TotalOfCarts();
+            return Ok(result);
+        }
     }
 }
 

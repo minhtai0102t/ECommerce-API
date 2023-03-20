@@ -19,6 +19,14 @@ namespace ECommerce.API.Controllers
             this.dataAccess = dataAccess;
             DateFormat = configuration["Constants:DateFormat"];
 		}
+
+        [HttpPost("InsertCartItem/{userid}/{productid}/{quantity}")]
+        public IActionResult InsertCartItem(int userid, int productid, int quantity)
+        {
+            var result = dataAccess.InsertCartItem(userid, productid, quantity);
+            return Ok(result ? "inserted" : "insert fail");
+        }
+
         [HttpGet("GetActiveCartOfUser/{id}")]
         public IActionResult GetActiveCartOfUser(int id)
         {
@@ -32,13 +40,12 @@ namespace ECommerce.API.Controllers
             var result = dataAccess.GetAllPreviousCartsOfUser(id);
             return Ok(result);
         }
-        [HttpPost("InsertCartItem/{userid}/{productid}/{quantity}")]
-        public IActionResult InsertCartItem(int userid, int productid, int quantity)
+        [HttpPut("UpdateCartItemQuantity/{userid}/{productid}/{quantity}")]
+        public IActionResult UpdateCartItemQuantity(int userid, int productid, int quantity)
         {
-            var result = dataAccess.InsertCartItem(userid, productid, quantity);
-            return Ok(result ? "inserted" : "insert fail");
+            var result = dataAccess.UpdateCartItemQuantity(userid, productid, quantity);
+            return Ok(result ? "updated" : "update fail");
         }
-        
         [HttpDelete("DeleteCartItem/{userid}/{productid}/{quantity}")]
         public IActionResult DeleteCartItem(int userid, int productid, int quantity)
         {

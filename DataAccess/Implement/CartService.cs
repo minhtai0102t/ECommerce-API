@@ -206,6 +206,31 @@ namespace ECommerce.API.DataAccess
             }
         }
         #endregion
+        #region Update
+        public bool UpdateCartItemQuantity(int userId, int productId, int quantity)
+        {
+            if (quantity < 0)
+            {
+                return false;
+            }
+            using (SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+                connection.Open();
+                string query = "SELECT CartId FROM Carts WHERE UserId=" + userId + " AND Ordered='false';";
+                command.CommandText = query;
+                int cartId = (int)command.ExecuteScalar();
+
+                query = "UPDATE CartItems SET Quantity=" + quantity + " WHERE CartId=" + cartId + "AND ProductId=" + productId + ";";
+                command.CommandText = query;
+                command.ExecuteNonQuery();
+            }
+            return true;
+        }
+        #endregion
         #region Delete
         public bool DeleteCartItem(int userId, int productId, int quantity)
         {

@@ -51,6 +51,7 @@ namespace ECommerce.API.DataAccess
                     user.CreatedAt = (string)reader["CreatedAt"];
                     user.ModifiedAt = (string)reader["ModifiedAt"];
                     user.Role = (string)reader["role"];
+                    user.UserAvt = (string)reader["UserAvt"];
                 }
             }
             return user;
@@ -75,7 +76,7 @@ namespace ECommerce.API.DataAccess
                     return false;
                 }
 
-                query = "INSERT INTO Users (FirstName, LastName, Address, Mobile, Email, Password, CreatedAt, ModifiedAt, role) values (@fn, @ln, @add, @mb, @em, @pwd, @cat, @mat, @role);";
+                query = "INSERT INTO Users (FirstName, LastName, Address, Mobile, Email, Password, CreatedAt, ModifiedAt, role, UserAvt) values (@fn, @ln, @add, @mb, @em, @pwd, @cat, @mat, @role, @avt);";
 
                 command.CommandText = query;
                 command.Parameters.Add("@fn", System.Data.SqlDbType.NVarChar).Value = user.FirstName;
@@ -87,6 +88,7 @@ namespace ECommerce.API.DataAccess
                 command.Parameters.Add("@cat", System.Data.SqlDbType.NVarChar).Value = user.CreatedAt;
                 command.Parameters.Add("@mat", System.Data.SqlDbType.NVarChar).Value = user.ModifiedAt;
                 command.Parameters.Add("@role", System.Data.SqlDbType.NVarChar).Value = user.Role;
+                command.Parameters.Add("@avt", System.Data.SqlDbType.NVarChar).Value = user.UserAvt;
 
                 command.ExecuteNonQuery();
             }
@@ -191,6 +193,7 @@ namespace ECommerce.API.DataAccess
                     user.CreatedAt = (string)reader["CreatedAt"];
                     user.ModifiedAt = (string)reader["ModifiedAt"];
                     user.Role = (string)reader["role"];
+                    user.UserAvt = (string)reader["UserAvt"];
                     users.Add(user);
                 }
             }
@@ -250,7 +253,7 @@ namespace ECommerce.API.DataAccess
                 }
 
                 query = "UPDATE Users " +
-                               "SET  FirstName=@fn, LastName=@ln, " +"Address=@add, Mobile=@mb, Email=@em, " +"Password=@pwd, CreatedAt=@cat, ModifiedAt=@mat, role=@role" +
+                               "SET  FirstName=@fn, LastName=@ln, " +"Address=@add, Mobile=@mb, Email=@em, " + "Password=@pwd, CreatedAt=@cat, ModifiedAt=@mat, role=@role, UserAvt=@avt" +
                                " WHERE UserId=" + user.Id + ";";
                  
                 command.CommandText = query;
@@ -263,6 +266,7 @@ namespace ECommerce.API.DataAccess
                 command.Parameters.Add("@cat", System.Data.SqlDbType.NVarChar).Value = user.CreatedAt;
                 command.Parameters.Add("@mat", System.Data.SqlDbType.NVarChar).Value = user.ModifiedAt;
                 command.Parameters.Add("@role", System.Data.SqlDbType.NVarChar).Value = user.Role;
+                command.Parameters.Add("@avt", System.Data.SqlDbType.NVarChar).Value = user.UserAvt;
 
                 command.ExecuteNonQuery();
             }

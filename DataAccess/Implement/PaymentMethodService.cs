@@ -1,11 +1,9 @@
-﻿using System;
-using ECommerce.API.Models;
+﻿using ECommerce.API.Models;
 using System.Data.SqlClient;
-using Microsoft.AspNetCore.Mvc.ViewEngines;
 
 namespace ECommerce.API.DataAccess
 {
-	public class PaymentMethodService : IPaymentMethodService
+    public class PaymentMethodService : IPaymentMethodService
 	{
         private readonly IConfiguration configuration;
         private readonly string dbconnection;

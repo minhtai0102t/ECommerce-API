@@ -18,7 +18,7 @@ namespace ECommerce.API.Controllers
             DateFormat = configuration["Constants:DateFormat"];
         }
         [HttpPost("InsertPayment")]
-        public IActionResult InsertPayment(Payment payment)
+        public IActionResult InsertPayment(InsertPaymentReq payment)    
         {
             payment.CreatedAt = DateTime.Now.ToString();
             var id = dataAccess.InsertPayment(payment);

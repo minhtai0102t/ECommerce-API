@@ -20,7 +20,7 @@ namespace ECommerce.API.DataAccess
             dateformat = this.configuration["Constants:DateFormat"];
         }
 
-        public int InsertPayment(Payment payment)
+        public int InsertPayment(InsertPaymentReq payment)
         {
             int value = 0;
             using (SqlConnection connection = new(dbconnection))
@@ -34,13 +34,13 @@ namespace ECommerce.API.DataAccess
                                 VALUES (@pmid, @uid, @ta, @sc, @ar, @ap, @cat);";
 
                 command.CommandText = query;
-                command.Parameters.Add("@pmid", System.Data.SqlDbType.Int).Value = payment.PaymentMethod.Id;
-                command.Parameters.Add("@uid", System.Data.SqlDbType.Int).Value = payment.User.Id;
+                command.Parameters.Add("@pmid", System.Data.SqlDbType.Int).Value = payment.PaymentMethodId;
+                command.Parameters.Add("@uid", System.Data.SqlDbType.Int).Value = payment.UserId;
                 command.Parameters.Add("@ta", System.Data.SqlDbType.NVarChar).Value = payment.TotalAmount;
                 command.Parameters.Add("@sc", System.Data.SqlDbType.NVarChar).Value = payment.ShipingCharges;
                 command.Parameters.Add("@ar", System.Data.SqlDbType.NVarChar).Value = payment.AmountReduced;
                 command.Parameters.Add("@ap", System.Data.SqlDbType.NVarChar).Value = payment.AmountPaid;
-                command.Parameters.Add("@cat", System.Data.SqlDbType.NVarChar).Value = payment.CreatedAt;
+                command.Parameters.Add("@cat", System.Data.SqlDbType.NVarChar).Value = DateTime.Now;
 
                 connection.Open();
                 value = command.ExecuteNonQuery();

@@ -5,7 +5,7 @@ namespace ECommerce.API.DataAccess
 {
 	public interface IPaymentService
 	{
-        int InsertPayment(Payment payment);
+        int InsertPayment(InsertPaymentReq payment);
 	}
 }
 

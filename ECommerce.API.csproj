@@ -23,7 +23,6 @@
     <None Remove="DataAccess\Implement\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\Request\" />
     <Folder Include="DataAccess\Interface\" />
     <Folder Include="DataAccess\Implement\" />
   </ItemGroup>

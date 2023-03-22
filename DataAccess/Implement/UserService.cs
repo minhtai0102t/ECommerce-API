@@ -217,17 +217,20 @@ namespace ECommerce.API.DataAccess
                     connection.Close();
                     return false;
                 }
-                query = "SELECT COUNT(*) FROM Reviews WHERE UserId ='" + id + "';";
+                query = "DELETE FROM Reviews WHERE UserId='" + id + "';";
                 command.CommandText = query;
-                count = (int)command.ExecuteScalar();
-                if (count != 0)
-                {
-                    connection.Close();
-                    return false;
-                }
+                command.ExecuteNonQuery();
+                query = "DELETE FROM Carts WHERE UserId='" + id + "';";
+                command.CommandText = query;
+                command.ExecuteNonQuery();
+                query = "DELETE FROM Payments WHERE UserId='" + id + "';";
+                command.CommandText = query;
+                command.ExecuteNonQuery();
+                query = "DELETE FROM Orders WHERE UserId='" + id + "';";
+                command.CommandText = query;
+                command.ExecuteNonQuery();
                 query = "DELETE FROM Users WHERE UserId='" + id + "';";
                 command.CommandText = query;
-
                 command.ExecuteNonQuery();
             }
             return true;

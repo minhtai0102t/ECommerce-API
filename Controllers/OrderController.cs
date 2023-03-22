@@ -19,7 +19,7 @@ namespace ECommerce.API.Controllers
         }
 
         [HttpPost("InsertOrder")]
-        public IActionResult InsertOrder(Order order)
+        public IActionResult InsertOrder(InsertOrderReq order)
         {
             order.CreatedAt = DateTime.Now.ToString();
             var id = dataAccess.InsertOrder(order);

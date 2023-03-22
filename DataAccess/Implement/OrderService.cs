@@ -22,7 +22,7 @@ namespace ECommerce.API.DataAccess
             dbconnection = this.configuration["ConnectionStrings:DB"];
             dateformat = this.configuration["Constants:DateFormat"];
         }
-		 public int InsertOrder(Order order)
+		 public int InsertOrder(InsertOrderReq order)
         {
             int value = 0;
 
@@ -36,17 +36,17 @@ namespace ECommerce.API.DataAccess
                 string query = "INSERT INTO Orders (UserId, CartId, PaymentId, CreatedAt) values (@uid, @cid, @pid, @cat);";
 
                 command.CommandText = query;
-                command.Parameters.Add("@uid", System.Data.SqlDbType.Int).Value = order.User.Id;
-                command.Parameters.Add("@cid", System.Data.SqlDbType.Int).Value = order.Cart.Id;
+                command.Parameters.Add("@uid", System.Data.SqlDbType.Int).Value = order.UserId;
+                command.Parameters.Add("@cid", System.Data.SqlDbType.Int).Value = order.CartId;
                 command.Parameters.Add("@cat", System.Data.SqlDbType.NVarChar).Value = order.CreatedAt;
-                command.Parameters.Add("@pid", System.Data.SqlDbType.Int).Value = order.Payment.Id;
+                command.Parameters.Add("@pid", System.Data.SqlDbType.Int).Value = order.PaymentId;
 
                 connection.Open();
                 value = command.ExecuteNonQuery();
 
                 if (value > 0)
                 {
-                    query = "UPDATE Carts SET Ordered='true', OrderedOn='" + DateTime.Now.ToString(dateformat) + "' WHERE CartId=" + order.Cart.Id + ";";
+                    query = "UPDATE Carts SET Ordered='true', OrderedOn='" + DateTime.Now.ToString(dateformat) + "' WHERE CartId=" + order.CartId + ";";
                     command.CommandText = query;
                     command.ExecuteNonQuery();
 

@@ -202,7 +202,7 @@ namespace ECommerce.API.DataAccess
         public bool Delete(int id)
         {
             var users = new List<User>();
-            using (SqlConnection connection = new(dbconnection)) // ket noi database
+            using (SqlConnection connection = new(dbconnection))
             {
                 SqlCommand command = new()
                 {
@@ -211,24 +211,40 @@ namespace ECommerce.API.DataAccess
                 connection.Open();
                 string query = "SELECT COUNT(*) FROM Users WHERE UserId ='" + id + "' ;";
                 command.CommandText = query;
-                int count = (int)command.ExecuteScalar();
-                if (count == 0)
+                int res = (int)command.ExecuteScalar();
+                if (res == 0)
                 {
                     connection.Close();
                     return false;
                 }
-                query = "SELECT COUNT(*) FROM Reviews WHERE UserId ='" + id + "';";
+                query = "DELETE FROM Orders WHERE UserId=" + id + ";";
                 command.CommandText = query;
-                count = (int)command.ExecuteScalar();
-                if (count != 0)
-                {
-                    connection.Close();
-                    return false;
-                }
-                query = "DELETE FROM Users WHERE UserId='" + id + "';";
-                command.CommandText = query;
-
                 command.ExecuteNonQuery();
+
+                query = "DELETE FROM Payments WHERE UserId=" + id + ";";
+                command.CommandText = query;
+                command.ExecuteNonQuery();
+
+                // get Cart Id
+                query = "SELECT CartId FROM Carts WHERE UserId=" + id + ";";
+                command.CommandText = query;
+                var check = command.ExecuteScalar();
+                // If user has cart then delete them
+                if(check != null)
+                {
+                    query = "DELETE FROM CartItems WHERE CartId=" + res + ";";
+                    command.CommandText = query;
+                    command.ExecuteNonQuery();
+                    query = "DELETE FROM Carts WHERE CartId =" + res + ";";
+                    command.CommandText = query;
+                    command.ExecuteNonQuery();
+                }
+                
+                query = "DELETE FROM Users WHERE UserId=" + id + ";";
+                command.CommandText = query;
+                command.ExecuteNonQuery();
+
+                connection.Close();
             }
             return true;
 

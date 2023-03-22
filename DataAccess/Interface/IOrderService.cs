@@ -5,7 +5,7 @@ namespace ECommerce.API.DataAccess
 {
 	public interface IOrderService
 	{
-		public int InsertOrder(Order order);
+		public int InsertOrder(InsertOrderReq order);
 	}
 }
 

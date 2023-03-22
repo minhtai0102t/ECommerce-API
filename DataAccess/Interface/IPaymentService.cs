@@ -5,7 +5,11 @@ namespace ECommerce.API.DataAccess
 {
 	public interface IPaymentService
 	{
-        int InsertPayment(InsertPaymentReq payment);
-	}
+        List<Payment> GetPayments();
+        Payment GetPaymentById(int id);
+        bool InsertPayment(InsertPaymentReq payment);
+        bool UpdatePayment(int id, UpdatePaymentReq payment);
+        bool DeletePayment(int id);
+    }
 }
 

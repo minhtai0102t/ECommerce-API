@@ -1,12 +1,5 @@
-﻿using System;
-using ECommerce.API.DataAccess;
-using ECommerce.API.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Cors;
-using ECommerce.API.Models.Request;
+﻿using ECommerce.API.Models;
 using System.Data.SqlClient;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ECommerce.API.DataAccess
 {
@@ -284,6 +277,40 @@ namespace ECommerce.API.DataAccess
                     connection.Close();
 
                 }
+                return true;
+            }
+        }
+        public bool DeleteAllCartItem(int userId)
+        {
+            using (SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+
+                connection.Open();
+                string query = "SELECT COUNT(*) FROM Carts WHERE UserId=" + userId + " AND Ordered='false';";
+                command.CommandText = query;
+                int count = (int)command.ExecuteScalar();
+                if (count == 0)
+                {
+                    return false;
+                }
+
+                query = "SELECT CartId FROM Carts WHERE UserId=" + userId + " AND Ordered='false';";
+                command.CommandText = query;
+                count = (int)command.ExecuteScalar();
+
+                query = "DELETE CartItems WHERE CartId=" + count + ";";
+                command.CommandText = query;
+                count = command.ExecuteNonQuery();
+                if(count == 0)
+                {
+                    connection.Close();
+                    return false;
+                }
+                connection.Close();
                 return true;
             }
         }

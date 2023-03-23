@@ -19,7 +19,6 @@ namespace ECommerce.API.DataAccess
             dbconnection = this.configuration["ConnectionStrings:DB"];
             dateformat = this.configuration["Constants:DateFormat"];
         }
-
         public List<Payment> GetPayments()
         {
             var payments = new List<Payment>();
@@ -37,11 +36,11 @@ namespace ECommerce.API.DataAccess
                 while(reader.Read())
                 {
                     var payment = new Payment();
-                    payment.Id = (int)reader["PaymentId"];
+                    payment.Id = (int)reader["Id"];
                     payment.User.Id = (int)reader["UserId"];
                     payment.PaymentMethod.Id = (int)reader["PaymentMethodId"];
                     payment.TotalAmount = (int)reader["TotalAmount"];
-                    payment.ShipingCharges = (int)reader["ShipingCharges"];
+                    payment.ShipingCharges = (int)reader["ShippingCharges"];
                     payment.AmountReduced = (int)reader["AmountReduced"];
                     payment.AmountPaid = (int)reader["AmountPaid"];
                     payment.CreatedAt = (string)reader["CreatedAt"];
@@ -70,7 +69,7 @@ namespace ECommerce.API.DataAccess
                     payment.User.Id = (int)reader["UserId"];
                     payment.PaymentMethod.Id = (int)reader["PaymentMethodId"];
                     payment.TotalAmount = (int)reader["TotalAmount"];
-                    payment.ShipingCharges = (int)reader["ShipingCharges"];
+                    payment.ShipingCharges = (int)reader["ShippingCharges"];
                     payment.AmountReduced = (int)reader["AmountReduced"];
                     payment.AmountPaid = (int)reader["AmountPaid"];
                     payment.CreatedAt = (string)reader["CreatedAt"];
@@ -121,7 +120,7 @@ namespace ECommerce.API.DataAccess
             return true;
         }
 
-        public bool UpdatePayment(int id,UpdatePaymentReq payment)
+        public bool UpdatePayment(int id, UpdatePaymentReq payment)
         {
             using (SqlConnection connection = new(dbconnection))
             {
@@ -130,7 +129,7 @@ namespace ECommerce.API.DataAccess
                     Connection = connection
                 };
 
-                string query = "SELECT * FROM Payments WHERE PaymentId=" + id + ";";
+                string query = "SELECT * FROM Payments WHERE Id=" + id + ";";
                 connection.Open();
                 command.CommandText = query;
                 var check = command.ExecuteScalar();
@@ -141,9 +140,9 @@ namespace ECommerce.API.DataAccess
                     return false;
                 }
 
-                query = @"UPDATE Payments (PaymentMethodId, TotalAmount, ShippingCharges, AmountReduced, AmountPaid, CreatedAt) 
-                                SET PaymentMethodId=@pmid, TotalAmount=@ta, ShippingCharges=@sc, AmountReduced=@ar, AmountPaid=@ap, CreatedAt=@cat) 
-                                WHERE PaymentId=" + id + ";";
+                query = @"UPDATE Payments" +
+                        " SET PaymentMethodId=@pmid, TotalAmount=@ta, ShippingCharges=@sc, AmountReduced=@ar, AmountPaid=@ap, CreatedAt=@cat" +
+                                " WHERE Id=" + id + ";";
 
                 command.CommandText = query;
                 command.Parameters.Add("@pmid", System.Data.SqlDbType.Int).Value = payment.PaymentMethodId;
@@ -153,7 +152,6 @@ namespace ECommerce.API.DataAccess
                 command.Parameters.Add("@ap", System.Data.SqlDbType.NVarChar).Value = payment.AmountPaid;
                 command.Parameters.Add("@cat", System.Data.SqlDbType.NVarChar).Value = DateTime.Now;
 
-                connection.Open();
                 int value = command.ExecuteNonQuery();
                 if (value <= 0)
                 {
@@ -177,7 +175,7 @@ namespace ECommerce.API.DataAccess
                 command.CommandText = query;
                 command.ExecuteNonQuery();
 
-                query = "DELETE FROM Payments WHERE PaymentId=" + id + ";";
+                query = "DELETE FROM Payments WHERE Id=" + id + ";";
                 command.CommandText = query;
                 int count = command.ExecuteNonQuery();
                 if(count <=0)

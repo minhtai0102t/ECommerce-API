@@ -5,7 +5,11 @@ namespace ECommerce.API.DataAccess
 {
 	public interface IOrderService
 	{
-		public int InsertOrder(InsertOrderReq order);
-	}
+        public List<Order> GetOrders();
+        public Order GetOrderById(int id);
+        public int InsertOrder(InsertOrderReq order);
+		public bool DeleteOrder(int id);
+
+    }
 }
 

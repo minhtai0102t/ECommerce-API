@@ -1,15 +1,9 @@
-﻿using System;
-using ECommerce.API.DataAccess;
-using ECommerce.API.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Cors;
-using ECommerce.API.Models.Request;
+﻿using ECommerce.API.Models;
 using System.Data.SqlClient;
 namespace ECommerce.API.DataAccess
 {
-	public class OrderService : IOrderService
-	{
+    public class OrderService : IOrderService
+    {
         #region Declare
 
         #endregion
@@ -22,7 +16,58 @@ namespace ECommerce.API.DataAccess
             dbconnection = this.configuration["ConnectionStrings:DB"];
             dateformat = this.configuration["Constants:DateFormat"];
         }
-		 public int InsertOrder(InsertOrderReq order)
+        public List<Order> GetOrders()
+        {
+            List<Order> orders = new List<Order>();
+            using (SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+                string query = "SELECT * FROM Orders;";
+                command.CommandText = query;
+                connection.Open();
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    Order order = new Order();
+                    order.Id = (int)reader["Id"];
+                    order.User.Id = (int)reader["UserId"];
+                    order.Cart.Id = (int)reader["CartId"];
+                    order.Payment.Id = (int)reader["PaymentId"];
+                    order.CreatedAt = (string)reader["CreatedAt"];
+
+                    orders.Add(order);
+                }
+                return orders;
+            }
+        }
+        public Order GetOrderById(int id)
+        {
+            using (SqlConnection connection = new(dbconnection))
+            {
+                Order order = new Order();
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+                string query = "SELECT * FROM Orders WHERE Id=" + id + ";";
+                command.CommandText = query;
+                connection.Open();
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    order.Id = (int)reader["Id"];
+                    order.User.Id = (int)reader["UserId"];
+                    order.Cart.Id = (int)reader["CartId"];
+                    order.Payment.Id = (int)reader["PaymentId"];
+                    order.CreatedAt = (string)reader["CreatedAt"];
+                }
+                return order;
+            }
+        }
+        public int InsertOrder(InsertOrderReq order)
         {
             int value = 0;
 
@@ -60,10 +105,31 @@ namespace ECommerce.API.DataAccess
                 }
                 connection.Close();
             }
-
             return value;
         }
+        public bool DeleteOrder(int id)
+        {
+            using (SqlConnection connection = new(dbconnection))
+            {
+                SqlCommand command = new()
+                {
+                    Connection = connection
+                };
+                string query = "DELETE Orders WHERE Id=" + id + ";";
+                command.CommandText = query;
+                connection.Open();
+                int count = command.ExecuteNonQuery();
+                if(count == 0)
+                {
+                    connection.Close();
+                    return false;
+                }
+                connection.Close();
+            }
+                
+            return true;
+        }
 
-	}
+    }
 }
 
